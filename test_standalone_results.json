@@ -1,0 +1,46 @@
+{
+  "evaluation_summary": {
+    "total_agents": 3,
+    "average_score": 0.7999999999999999,
+    "evaluation_time": 10.0
+  },
+  "agent_results": [
+    {
+      "agent_id": "agent-0",
+      "agent_name": "Test Agent 1",
+      "scores": {
+        "Instruction Following": 0.7,
+        "Hallucination Detection": 0.8,
+        "Assumption Control": 0.6,
+        "Coherence & Accuracy": 0.7
+      },
+      "overall_score": 0.7,
+      "passed": true
+    },
+    {
+      "agent_id": "agent-1",
+      "agent_name": "Test Agent 2",
+      "scores": {
+        "Instruction Following": 0.7999999999999999,
+        "Hallucination Detection": 0.8500000000000001,
+        "Assumption Control": 0.7,
+        "Coherence & Accuracy": 0.7999999999999999
+      },
+      "overall_score": 0.7999999999999999,
+      "passed": true
+    },
+    {
+      "agent_id": "agent-2",
+      "agent_name": "Test Agent 3",
+      "scores": {
+        "Instruction Following": 0.8999999999999999,
+        "Hallucination Detection": 0.9,
+        "Assumption Control": 0.8,
+        "Coherence & Accuracy": 0.8999999999999999
+      },
+      "overall_score": 0.8999999999999999,
+      "passed": true
+    }
+  ],
+  "exported_at": "2025-09-13T14:27:07.579357"
+}
