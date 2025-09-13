@@ -14,6 +14,24 @@ from deepeval.test_run import on_test_run_end, log_hyperparameters
 from deepeval.utils import login
 from deepeval.telemetry import *
 
+# Import agentic evaluation framework (commented out to avoid circular imports)
+# from deepeval.agentic import (
+#     AgenticEvaluator,
+#     AgentRegistry,
+#     Agent,
+#     InstructionFollowing,
+#     HallucinationDetection,
+#     AssumptionControl,
+#     CoherenceAccuracy,
+#     DomainEvaluator,
+#     DomainType,
+#     EvaluationConfig,
+#     AgenticEvaluationResult,
+#     AgentResult,
+#     Leaderboard,
+#     PerformanceExplanation
+# )
+
 
 settings = get_settings()
 if not settings.DEEPEVAL_GRPC_LOGGING:
@@ -28,6 +46,21 @@ __all__ = [
     "assert_test",
     "on_test_run_end",
     "compare",
+    # Agentic evaluation framework (commented out to avoid circular imports)
+    # "AgenticEvaluator",
+    # "AgentRegistry",
+    # "Agent",
+    # "InstructionFollowing",
+    # "HallucinationDetection",
+    # "AssumptionControl",
+    # "CoherenceAccuracy",
+    # "DomainEvaluator",
+    # "DomainType",
+    # "EvaluationConfig",
+    # "AgenticEvaluationResult",
+    # "AgentResult",
+    # "Leaderboard",
+    # "PerformanceExplanation",
 ]
 
 
