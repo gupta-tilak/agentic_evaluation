@@ -299,8 +299,34 @@ class HuggingFaceAgent:
         
         try:
             from transformers import pipeline
-            self.model = pipeline(task, model=model_name, device_map="auto" if task == "text-generation" else None)
-            print(f"✅ Loaded HuggingFace model: {model_name}")
+            
+            # Try different loading strategies with fallbacks
+            loading_strategies = [
+                # Strategy 1: Use device_map with accelerate (requires accelerate package)
+                {"device_map": "auto"},
+                # Strategy 2: Use CPU only (fallback if GPU issues)
+                {"device": "cpu"},
+                # Strategy 3: Basic loading without device specification
+                {}
+            ]
+            
+            self.model = None
+            for i, kwargs in enumerate(loading_strategies):
+                try:
+                    print(f"🔄 Trying to load {model_name} with strategy {i+1}...")
+                    self.model = pipeline(task, model=model_name, **kwargs)
+                    print(f"✅ Successfully loaded HuggingFace model: {model_name} (strategy {i+1})")
+                    break
+                except Exception as strategy_error:
+                    print(f"   Strategy {i+1} failed: {str(strategy_error)[:100]}...")
+                    continue
+            
+            if self.model is None:
+                print(f"❌ All loading strategies failed for {model_name}")
+                
+        except ImportError as e:
+            print(f"⚠️  transformers not available: {e}")
+            self.model = None
         except Exception as e:
             print(f"⚠️  Failed to load {model_name}: {e}")
             self.model = None
@@ -312,15 +338,27 @@ class HuggingFaceAgent:
         
         try:
             if self.task == "text-generation":
-                result = self.model(prompt, max_length=max_length, num_return_sequences=1, 
-                                  truncation=True, pad_token_id=self.model.tokenizer.eos_token_id)
-                return result[0]["generated_text"].replace(prompt, "").strip()
+                # Handle potential tokenizer issues
+                try:
+                    result = self.model(prompt, max_length=max_length, num_return_sequences=1, 
+                                      truncation=True, pad_token_id=self.model.tokenizer.eos_token_id)
+                except AttributeError:
+                    # Fallback if tokenizer doesn't have eos_token_id
+                    result = self.model(prompt, max_length=max_length, num_return_sequences=1, 
+                                      truncation=True)
+                
+                generated_text = result[0]["generated_text"]
+                # Remove the input prompt from the output
+                if generated_text.startswith(prompt):
+                    generated_text = generated_text[len(prompt):].strip()
+                
+                return generated_text if generated_text else "Generated response was empty"
             else:
                 result = self.model(prompt)
                 return str(result)
                 
         except Exception as e:
-            return f"Generation error: {str(e)}"
+            return f"Generation error for {self.model_name}: {str(e)[:100]}..."
 
 class MockHighQualityAgent:
     """Mock high-quality agent for demonstration"""
@@ -626,11 +664,31 @@ def create_demo_agents() -> List[Any]:
     # Try to add HuggingFace agents (if available)
     try:
         print("🔄 Attempting to load HuggingFace models...")
-        hf_agents = [
-            HuggingFaceAgent("gpt2"),
-            HuggingFaceAgent("distilgpt2")
+        
+        # List of models to try, starting with smaller/faster ones
+        models_to_try = [
+            ("distilgpt2", "text-generation"),  # Smaller, faster model
+            ("gpt2", "text-generation"),        # Standard GPT-2
         ]
-        agents.extend([agent for agent in hf_agents if agent.model is not None])
+        
+        successfully_loaded = 0
+        for model_name, task in models_to_try:
+            try:
+                hf_agent = HuggingFaceAgent(model_name, task)
+                if hf_agent.model is not None:
+                    agents.append(hf_agent)
+                    successfully_loaded += 1
+                    print(f"✅ Added {model_name} to evaluation")
+                else:
+                    print(f"⚠️  Skipping {model_name} - failed to load")
+            except Exception as e:
+                print(f"⚠️  Failed to create agent for {model_name}: {str(e)[:50]}...")
+        
+        if successfully_loaded > 0:
+            print(f"✅ Successfully loaded {successfully_loaded} HuggingFace model(s)")
+        else:
+            print("⚠️  No HuggingFace models could be loaded - continuing with mock agents only")
+            
     except Exception as e:
         print(f"⚠️  HuggingFace models not available: {e}")
         print("   Continuing with mock agents...")
