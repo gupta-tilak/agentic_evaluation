@@ -497,22 +497,61 @@ class MockHighQualityAgent:
         self.model_name = name
         self.domain = "expert"
         
-        self.knowledge_base = {
-            "ai": "Artificial Intelligence is a comprehensive field of computer science that focuses on creating systems capable of performing tasks that typically require human intelligence, including learning, reasoning, perception, and decision-making.",
-            "ml": "Machine Learning is a subset of AI that enables systems to automatically learn and improve from experience without being explicitly programmed, using algorithms to identify patterns in data.",
+        # Comprehensive knowledge base for various question types
+        self.responses = {
+            # Math questions
+            "2 + 2": "4",
+            "what is 2 + 2": "4", 
+            "2+2": "4",
+            "two plus two": "4",
+            
+            # Literature questions
+            "pride and prejudice": "Jane Austen wrote 'Pride and Prejudice', which was published in 1813. It's one of her most famous novels and a cornerstone of English literature.",
+            "who wrote pride and prejudice": "Jane Austen",
+            "jane austen": "Jane Austen was an English novelist known for her wit, social commentary, and romantic fiction including Pride and Prejudice, Sense and Sensibility, and Emma.",
+            
+            # Science questions
+            "artificial intelligence": "Artificial Intelligence (AI) is a comprehensive field of computer science that focuses on creating systems capable of performing tasks that typically require human intelligence, including learning, reasoning, perception, and decision-making.",
+            "machine learning": "Machine Learning is a subset of AI that enables systems to automatically learn and improve from experience without being explicitly programmed, using algorithms to identify patterns in data.",
             "renewable": "Renewable energy offers significant benefits including reduced greenhouse gas emissions, energy independence, job creation, long-term cost savings, and sustainable power generation from sources like solar, wind, and hydroelectric power.",
-            "climate": "Climate change mitigation requires comprehensive strategies including transitioning to renewable energy, improving energy efficiency, developing carbon capture technologies, and implementing sustainable practices across industries."
+            "climate": "Climate change mitigation requires comprehensive strategies including transitioning to renewable energy, improving energy efficiency, developing carbon capture technologies, and implementing sustainable practices across industries.",
+            "data science": "Data science and artificial intelligence are closely related fields. Data science provides the foundation by collecting, cleaning, and analyzing data, while AI uses these techniques and data to build intelligent systems that can learn and make decisions.",
+            
+            # General knowledge
+            "unit testing": "Unit testing provides several key benefits: 1) Early bug detection during development, 2) Documentation of expected behavior, 3) Confidence when refactoring code, 4) Improved code design, and 5) Faster debugging when issues arise.",
+            "benefits of unit testing": "• Catches bugs early in development\n• Provides documentation of expected behavior\n• Enables safe refactoring of code\n• Improves overall code quality\n• Reduces debugging time",
+            
+            # Context-based questions
+            "olympics": "The 2024 Olympics took place in Paris, France. The games featured numerous events and were notable for their sustainable approach and use of existing venues along the River Seine."
         }
     
     def generate(self, prompt: str) -> str:
-        """Generate high-quality responses"""
-        prompt_lower = prompt.lower()
+        """Generate high-quality, relevant responses"""
+        prompt_lower = prompt.lower().strip()
         
-        for key, response in self.knowledge_base.items():
+        # Direct exact matches first
+        if prompt_lower in self.responses:
+            return self.responses[prompt_lower]
+        
+        # Partial matches for key phrases
+        for key, response in self.responses.items():
             if key in prompt_lower:
                 return response
         
-        return "I'd be happy to provide a comprehensive answer. Could you please provide more specific details about what aspect you'd like me to focus on?"
+        # Pattern matching for math
+        import re
+        math_pattern = r'(\d+)\s*\+\s*(\d+)'
+        match = re.search(math_pattern, prompt_lower)
+        if match:
+            a, b = int(match.group(1)), int(match.group(2))
+            return str(a + b)
+        
+        # Single number requests (common in math)
+        if "single number" in prompt_lower and any(word in prompt_lower for word in ["2", "two", "plus", "+"]):
+            return "4"
+        
+        # Default comprehensive response
+        return f"Based on my analysis of your question '{prompt[:60]}...', I can provide a comprehensive and accurate response. This demonstrates high-quality reasoning and relevant information tailored to your specific inquiry."
 
 class MockAverageAgent:
     """Mock average-quality agent for demonstration"""
@@ -523,16 +562,33 @@ class MockAverageAgent:
     
     def generate(self, prompt: str) -> str:
         """Generate average-quality responses"""
-        prompt_lower = prompt.lower()
+        prompt_lower = prompt.lower().strip()
         
-        if "ai" in prompt_lower or "artificial intelligence" in prompt_lower:
-            return "AI is technology that makes computers smart like humans. It's used in many applications."
+        # Math - correct but brief
+        if "2 + 2" in prompt_lower or "2+2" in prompt_lower:
+            return "4"
+        
+        # Literature - partially correct
+        if "pride and prejudice" in prompt_lower:
+            return "Jane Austen"
+        
+        # Science - basic responses
+        if "artificial intelligence" in prompt_lower or "ai" in prompt_lower:
+            return "AI is computer technology that tries to think like humans. It uses algorithms and data."
         elif "machine learning" in prompt_lower or "ml" in prompt_lower:
-            return "Machine learning is when computers learn from data without being programmed for everything."
+            return "Machine learning is when computers learn from data automatically."
         elif "renewable" in prompt_lower or "energy" in prompt_lower:
-            return "Renewable energy is good for the environment and comes from sources like solar and wind."
+            return "Renewable energy comes from sources like solar and wind. It's better for the environment."
+        elif "climate" in prompt_lower:
+            return "Technology can help with climate change through clean energy."
+        elif "data science" in prompt_lower:
+            return "Data science works with AI to analyze information and make smart systems."
+        elif "unit testing" in prompt_lower:
+            return "Unit testing helps find bugs and makes code better."
+        elif "olympics" in prompt_lower:
+            return "The Olympics were held in Paris in 2024."
         else:
-            return "That's an interesting question about technology and science."
+            return f"This is a reasonable answer about {prompt[:30]}. It provides some relevant information."
 
 class MockPoorAgent:
     """Mock poor-quality agent for demonstration"""
@@ -543,7 +599,35 @@ class MockPoorAgent:
     
     def generate(self, prompt: str) -> str:
         """Generate poor-quality responses"""
-        return "I don't know much about that topic. Computer stuff is complicated."
+        prompt_lower = prompt.lower().strip()
+        
+        # Even poor agents might get very simple math right sometimes
+        if "2 + 2" in prompt_lower and "number" in prompt_lower:
+            return "4 maybe"
+        
+        # But struggle with most things
+        if "pride and prejudice" in prompt_lower:
+            return "Some author wrote it"
+        elif "artificial intelligence" in prompt_lower or "ai" in prompt_lower:
+            return "AI is complicated stuff"
+        elif "machine learning" in prompt_lower:
+            return "Computers learn things somehow"
+        elif "renewable" in prompt_lower or "energy" in prompt_lower:
+            return "Solar power is good I think"
+        elif "unit testing" in prompt_lower:
+            return "Testing is important"
+        elif "olympics" in prompt_lower:
+            return "Some sports event"
+        else:
+            poor_responses = [
+                "I'm not sure about this",
+                "This seems complicated", 
+                "Maybe someone else knows",
+                "Hard to say",
+                "Could be anything"
+            ]
+            import random
+            return random.choice(poor_responses)
 
 # ============================================================================
 # EVALUATION FRAMEWORK WITH BATCH PROCESSING

@@ -1,0 +1,33 @@
+{
+  "agents": [
+    {
+      "name": "Expert AI Assistant",
+      "type": "mock_high",
+      "domain": "general"
+    },
+    {
+      "name": "Standard Assistant", 
+      "type": "mock_average",
+      "domain": "general"
+    },
+    {
+      "name": "Basic Assistant",
+      "type": "mock_poor", 
+      "domain": "general"
+    }
+  ],
+  "test_cases": [
+    {
+      "test_case_id": 1,
+      "prompt": "What is 2 + 2? Answer with a single number.",
+      "reference": "4",
+      "context": ""
+    },
+    {
+      "test_case_id": 2,
+      "prompt": "Who wrote 'Pride and Prejudice'?",
+      "reference": "Jane Austen",
+      "context": ""
+    }
+  ]
+}

@@ -1,4 +1,0 @@
-agent_id,agent_name,overall_score,passed
-agent-0,Test Agent 1,0.7,True
-agent-1,Test Agent 2,0.7999999999999999,True
-agent-2,Test Agent 3,0.8999999999999999,True

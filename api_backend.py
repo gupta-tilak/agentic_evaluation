@@ -35,6 +35,8 @@ import sys
 import json
 import uuid
 import asyncio
+import time
+import requests
 from datetime import datetime
 from typing import Dict, List, Optional, Any, Union
 from dataclasses import dataclass, asdict
@@ -269,7 +271,10 @@ class EvaluationManager:
         from deepeval.test_case import LLMTestCase
         
         test_cases = []
-        for custom_test in custom_test_cases:
+        # Store test case ID mapping separately
+        self._test_case_id_mapping = {}
+        
+        for i, custom_test in enumerate(custom_test_cases):
             # Create LLMTestCase object with frontend data
             test_case = LLMTestCase(
                 input=custom_test.prompt,
@@ -277,6 +282,9 @@ class EvaluationManager:
                 expected_output=custom_test.reference,
                 context=[custom_test.context] if custom_test.context else []
             )
+            
+            # Store mapping of test case input to test_case_id for later lookup
+            self._test_case_id_mapping[custom_test.prompt] = custom_test.test_case_id
             test_cases.append(test_case)
         
         return test_cases
@@ -287,18 +295,24 @@ class EvaluationManager:
         
         for agent_result in results.get("agent_results", []):
             agent_name = agent_result["agent_name"]
-            domain = agent_result["domain"]
+            domain = agent_result.get("domain", "general")
             
             for test_result in agent_result.get("test_results", []):
+                # Get test_case_id from mapping using the input prompt
+                test_case_id = getattr(self, '_test_case_id_mapping', {}).get(
+                    test_result["input"], 
+                    len(responses) + 1  # fallback to index
+                )
+                
                 response_entry = {
                     "agent": agent_name,
                     "domain": domain,
                     "prompt": test_result["input"],
                     "response": test_result["actual_output"],
                     "reference": test_result["expected_output"],
-                    "context": " ".join(test_result.get("context", [])),
-                    "evaluation_id": results["evaluation_summary"]["timestamp"],
-                    "test_case_id": test_result["test_case_id"],
+                    "context": " ".join(test_result.get("context", [])) if test_result.get("context") else "",
+                    "evaluation_id": results.get("evaluation_summary", {}).get("timestamp", "unknown"),
+                    "test_case_id": test_case_id,
                     "metric_scores": test_result.get("metric_scores", {}),
                     "timestamp": datetime.now().isoformat()
                 }

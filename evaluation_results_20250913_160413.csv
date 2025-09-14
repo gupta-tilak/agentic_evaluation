@@ -1,5 +1,0 @@
-agent_id,agent_name,overall_score,passed,evaluation_time,test_cases_processed,errors_count,Assumption Control,Coherence & Accuracy,Hallucination Detection,Instruction Following
-agent_82d95b8c,DialoGPT Agent,0.0,False,0.0004329681396484375,4,0,0.0,0.0,0.0,0.0
-agent_0c7a67c9,DistilBERT QA Agent,0.0,False,0.00033211708068847656,4,0,0.0,0.0,0.0,0.0
-agent_45d98e65,T5 Summarization Agent,0.0,False,0.0003428459167480469,4,0,0.0,0.0,0.0,0.0
-agent_d5342891,CodeBERT Agent,0.0,False,0.0003306865692138672,4,0,0.0,0.0,0.0,0.0
