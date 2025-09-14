@@ -1,0 +1,92 @@
+{
+  "agents": [
+    {
+      "name": "Expert AI Agent",
+      "type": "mock_high",
+      "domain": "general"
+    },
+    {
+      "name": "Standard AI Agent", 
+      "type": "mock_average",
+      "domain": "general"
+    },
+    {
+      "name": "Basic AI Agent",
+      "type": "mock_poor", 
+      "domain": "general"
+    }
+  ],
+  "test_cases": [
+    {
+      "test_case_id": 1,
+      "prompt": "What is 2 + 2? Answer with a single number.",
+      "reference": "4",
+      "context": "",
+      "domain": "math"
+    },
+    {
+      "test_case_id": 2,
+      "prompt": "Who wrote 'Pride and Prejudice'?",
+      "reference": "Jane Austen",
+      "context": "Context passage: Pride and Prejudice is a novel by Jane Austen, published in 1813.",
+      "domain": "qa-rag"
+    },
+    {
+      "test_case_id": 3,
+      "prompt": "List three benefits of unit testing. Use bullet points only.",
+      "reference": "- Catches regressions\n- Documents behavior\n- Enables refactoring",
+      "context": "",
+      "domain": "instruction-following"
+    },
+    {
+      "test_case_id": 4,
+      "prompt": "Summarize the following in one sentence.",
+      "reference": "Cats are small, agile and independent pets.",
+      "context": "Cats are small carnivorous mammals. They are popular pets and known for agility and independence.",
+      "domain": "summarization"
+    },
+    {
+      "test_case_id": 5,
+      "prompt": "When is Alice's birthday? If unknown, say you don't know.",
+      "reference": "I don't know.",
+      "context": "",
+      "domain": "assumption-control"
+    },
+    {
+      "test_case_id": 6,
+      "prompt": "Answer using only the provided context.",
+      "reference": "The 2024 Olympics took place in Paris, France.",
+      "context": "The 2024 Paris Olympics took place in Paris, France. Many events were held along the River Seine.",
+      "domain": "hallucination"
+    },
+    {
+      "test_case_id": 7,
+      "prompt": "According to the context, what is the capital of Australia?",
+      "reference": "Canberra",
+      "context": "Australia's capital city is Canberra, while Sydney and Melbourne are larger cities.",
+      "domain": "qa-rag"
+    },
+    {
+      "test_case_id": 8,
+      "prompt": "Respond with exactly two bullet points about HTTP 404.",
+      "reference": "- HTTP 404 indicates the requested resource was not found.\n- It is a client-side error status code.",
+      "context": "",
+      "domain": "instruction-following"
+    },
+    {
+      "test_case_id": 9,
+      "prompt": "Briefly define machine learning.",
+      "reference": "Machine learning is the study of algorithms that learn patterns from data to make predictions or decisions.",
+      "context": "",
+      "domain": "coherence-accuracy"
+    },
+    {
+      "test_case_id": 10,
+      "prompt": "Give a one-word synonym for 'quick'.",
+      "reference": "fast",
+      "context": "",
+      "domain": "edge-empty-output"
+    }
+  ],
+  "batch_processing": true
+}
