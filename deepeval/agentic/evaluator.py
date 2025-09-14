@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from .types import (
     Agent, AgenticEvaluationResult, EvaluationConfig, TestCaseType,
-    AgentResult, AgentRanking, Leaderboard, PerformanceExplanation
+    AgentResult, AgentRanking, Leaderboard, PerformanceExplanation, DomainType
 )
 from .agent_registry import AgentRegistry
 from .dimensions import (
@@ -50,17 +50,21 @@ class AgenticEvaluator:
         self,
         name: str,
         model_name: str,
-        domain: str = "general",
+        domain: Union[str, DomainType] = "general",
         metadata: Optional[Dict[str, Any]] = None
     ) -> str:
         """Register a new agent for evaluation"""
         from .types import DomainType
         
-        try:
-            domain_enum = DomainType(domain.lower())
-        except ValueError:
-            domain_enum = DomainType.GENERAL
-            self.logger.warning(f"Unknown domain '{domain}', using 'general'")
+        # Handle both string and DomainType inputs
+        if isinstance(domain, DomainType):
+            domain_enum = domain
+        else:
+            try:
+                domain_enum = DomainType(domain.lower())
+            except ValueError:
+                domain_enum = DomainType.GENERAL
+                self.logger.warning(f"Unknown domain '{domain}', using 'general'")
         
         return self.agent_registry.register_agent(
             name=name,
