@@ -12,7 +12,6 @@ cachetools==5.5.2
 certifi==2025.8.3
 charset-normalizer==3.4.3
 click==8.2.1
--e git+https://github.com/gupta-tilak/agentic_evaluation.git@227d78e9502336fcbc6859133ff57634da6085c5#egg=deepeval
 distro==1.9.0
 execnet==2.1.1
 fastapi==0.104.1
