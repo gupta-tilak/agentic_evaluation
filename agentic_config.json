@@ -1,0 +1,41 @@
+{
+  "free_models": {
+    "ollama": {
+      "enabled": true,
+      "models": [
+        "llama2:7b",
+        "mistral:7b",
+        "codellama:7b",
+        "phi:3b"
+      ],
+      "api_url": "http://localhost:11434/api/generate"
+    },
+    "huggingface": {
+      "enabled": true,
+      "models": [
+        "distilgpt2",
+        "microsoft/DialoGPT-medium",
+        "gpt2"
+      ]
+    },
+    "mock": {
+      "enabled": true,
+      "description": "Mock responses for testing without external APIs"
+    }
+  },
+  "evaluation": {
+    "max_agents": 50,
+    "batch_size": 5,
+    "max_concurrent": 10,
+    "timeout_seconds": 300,
+    "include_explanations": true
+  },
+  "domains": [
+    "general",
+    "qa",
+    "summarization",
+    "reasoning",
+    "conversation",
+    "code_generation"
+  ]
+}
